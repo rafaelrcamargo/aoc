@@ -7,3 +7,5 @@ node_modules
 # Visual Studio Code
 .vscode
 **/.vscode/
+
+.elixir_ls/
