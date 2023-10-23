@@ -14,14 +14,12 @@ defmodule Aoc do
     end
   end
 
-  def convert(snafu) do
+  def from_snafu(snafu) do
     chars = snafu |> String.split("", trim: true) |> Enum.reverse()
 
     Stream.zip(Stream.iterate(0, &(&1 + 1)), chars)
     |> Enum.map(fn {k, v} -> {5 ** k, snafu_to_int(v)} end)
-    # |> IO.inspect()
     |> Enum.map(fn {k, v} -> k * v end)
-    # |> IO.inspect()
     |> Enum.sum()
   end
 
@@ -34,17 +32,22 @@ defmodule Aoc do
   end
 
   def to_snafu(num) do
-    Stream.unfold({num, []}, fn {n, acc} ->
-      if n > 0 do
-        d = rem(n + 2, 5) - 2
-        {[int_to_snafu(d) | acc], {Integer.floor_div(n - d, 5), [int_to_snafu(d) | acc]}}
-      else
-        nil
-      end
-    end)
-    |> Enum.take(-1)
-    |> Enum.at(0)
-    |> Enum.join()
+    stream =
+      Stream.unfold(num, fn n ->
+        if n > 0 do
+          r = rem(n + 2, 5) - 2
+
+          {
+            int_to_snafu(r),
+            Integer.floor_div(n - r, 5)
+          }
+        else
+          nil
+        end
+      end)
+
+    stream
+    |> Enum.take(256)
   end
 end
 
@@ -52,13 +55,10 @@ case File.read("./assets/input.txt") do
   {:ok, file} ->
     file
     |> String.split()
-    # |> IO.inspect()
-    |> Enum.map(fn line -> Aoc.convert(line) end)
-    # |> IO.inspect()
+    |> Enum.map(&Aoc.from_snafu(&1))
     |> Enum.sum()
-    |> IO.inspect()
     |> Aoc.to_snafu()
-    |> IO.inspect()
+    |> IO.puts()
 
   {:error, _} ->
     IO.puts("Error reading input file!")
