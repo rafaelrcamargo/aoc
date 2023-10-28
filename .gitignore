@@ -1,11 +1,9 @@
-# Cargo
-target
-
-# Node
-node_modules
+# Mac
+.DS_Store
 
 # Visual Studio Code
 .vscode
 **/.vscode/
 
+# Elixir
 .elixir_ls/
