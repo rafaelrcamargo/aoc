@@ -1,6 +1,6 @@
-# AOC - Day 25
+# AOC - Day 03
 
-This is my solution for day 3 of Advent of Code 2022. And today we are using [Elixir](https://elixir-lang.org/).
+This is my solution for day 03 of Advent of Code 2022. And today we are using [Elixir](https://elixir-lang.org/).
 
 ## How to
 
