@@ -1,68 +1,64 @@
-input = open("./assets/index.txt", "r").readlines()
+with open("./assets/input.txt", "r", encoding="utf8") as file:
+    in_lines = file.readlines()
 
+    def get_crates(lines: list[str]) -> list[str]:
+        crates = []
 
-def get_crates(input):
-    crates = []
+        for line in lines:
+            if not line.startswith(" 1 "):
+                crates.append(line.strip("\n"))
+            else:
+                break
 
-    for line in input:
-        if not line.startswith(" 1 "):
-            crates.append(line.strip("\n"))
-        else:
-            break
+        return crates
 
-    return crates
+    def get_stacks(lines: list[str]) -> list[list[str]]:
+        stacks: list[list[str]] = [[] for _ in range(0, len(lines[0]), 4)]
 
+        for i, line in enumerate(get_crates(lines)):
+            row = [line[i : i + 4] for i in range(0, len(line), 4)]
 
-def get_stacks(input):
-    stacks = [[] for _ in range(0, len(input[0]), 4)]
+            for ii, crate in enumerate(row):
+                char = crate.strip("[] ")
 
-    for i, line in enumerate(get_crates(input)):
-        row = [line[i : i + 4] for i in range(0, len(line), 4)]
+                if char:
+                    stacks[ii].append(char)
 
-        for ii, crate in enumerate(row):
-            char = crate.strip("[] ")
+        return stacks
 
-            if char:
-                stacks[ii].append(char)
+    def get_moves(lines: list[str]) -> list[list[int]]:
+        moves = []
 
-    return stacks
+        for line in lines:
+            if line.startswith("move"):
+                moves.append(
+                    [int(x) for i, x in enumerate(line.split()) if (i + 1) % 2 == 0]
+                )
 
+        return moves
 
-def get_moves(input):
-    moves = []
+    def solve_moves(lines: list[str], reverse: bool = False) -> list[list[str]]:
+        stacks = get_stacks(lines)
 
-    for line in input:
-        if line.startswith("move"):
-            moves.append(
-                [int(x) for i, x in enumerate(line.split()) if (i + 1) % 2 == 0]
-            )
+        for move in get_moves(lines):
+            crates = stacks[move[1] - 1][0 : move[0]]
 
-    return moves
+            if reverse:
+                crates.reverse()  # For part 2.
 
+            for i in crates:
+                stacks[move[2] - 1].insert(0, i)
 
-def solve_moves(input, reverse=False):
-    stacks = get_stacks(input)
+            del stacks[move[1] - 1][0 : move[0]]
 
-    for move in get_moves(input):
-        list = stacks[move[1] - 1][0 : move[0]]
+        return stacks
 
-        if reverse:
-            list.reverse()  # For part 2.
+    print("\nPart 1: ")
+    for stack in solve_moves(in_lines):
+        print(stack[0], end="")
 
-        for i in list:
-            stacks[move[2] - 1].insert(0, i)
+    print("\n\nPart 2: ")
+    for stack in solve_moves(in_lines, reverse=True):
+        print(stack[0], end="")
 
-        del stacks[move[1] - 1][0 : move[0]]
-
-    return stacks
-
-
-print("\nPart 1: ")
-for stack in solve_moves(input):
-    print(stack[0], end="")
-
-print("\n\nPart 2: ")
-for stack in solve_moves(input, reverse=True):
-    print(stack[0], end="")
-
-print("\n")
+    print("\n")
