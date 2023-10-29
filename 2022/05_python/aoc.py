@@ -53,12 +53,12 @@ with open("./assets/input.txt", "r", encoding="utf8") as file:
 
         return stacks
 
-    print("\nPart 1: ")
+    print("Part 1: ", end="")
     for stack in solve_moves(in_lines):
         print(stack[0], end="")
 
-    print("\n\nPart 2: ")
+    print("\nPart 2: ", end="")
     for stack in solve_moves(in_lines, reverse=True):
         print(stack[0], end="")
 
-    print("\n")
+    print("")
