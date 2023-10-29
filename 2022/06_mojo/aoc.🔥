@@ -1,0 +1,55 @@
+from utils.vector import DynamicVector
+
+
+fn read_file(path: String) -> String:
+    var content: String = ""
+
+    try:
+        with open(path, "r") as file:
+            content = file.read()
+    except e:
+        print(e)
+
+    return content
+
+
+fn contains(list: DynamicVector[Int], needle: Int) -> Bool:
+    for i in range(list.size):
+        if list[i] == needle:
+            return True
+
+    return False
+
+
+fn find(input: String, amount: Int) -> Int:
+    var appearances: DynamicVector[Int] = DynamicVector[Int]()
+    var counter: DynamicVector[Int] = DynamicVector[Int]()
+
+    var i = 0
+    while i <= len(input):
+        if counter.size == amount:
+            break
+
+        if contains(appearances, ord(input[i])):
+            # We rollback the amount of the counter to start again but 1 step after the last
+            i -= counter.size - 1
+
+            # And clean all the lists
+            appearances.clear()
+            counter.clear()
+
+        # We add to the lists
+        appearances.push_back(ord(input[i]))
+        counter.push_back(i + 1)
+
+        i += 1
+
+    return counter[counter.size - 1]
+
+
+fn main():
+    let input = read_file("./assets/input.txt")
+
+    # Solve for each part
+    print("Part 1:", find(input, 4))
+    print("Part 2:", find(input, 14))
