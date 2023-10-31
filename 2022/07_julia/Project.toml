@@ -1,0 +1,4 @@
+name = "aoc"
+uuid = "89a993fa-ea06-4273-969d-d1332c2c7561"
+authors = ["Rafael R. Camargo <rafaelrakochinski@gmail.com>"]
+version = "0.1.0"
