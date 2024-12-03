@@ -3,10 +3,8 @@ fn parse_line(hay: &str) -> i32 {
         .unwrap()
         .captures_iter(hay)
         .map(|c| c.extract())
-        .map(|(_, [multiplicand, multiplier])| {
-            multiplicand.parse::<i32>().unwrap() * multiplier.parse::<i32>().unwrap()
-        })
-        .sum::<i32>()
+        .map(|(_, [x, y])| x.parse::<i32>().unwrap() * y.parse::<i32>().unwrap())
+        .sum()
 }
 
 fn main() {
