@@ -3,7 +3,48 @@ use std::fs;
 enum Direction {
     Increasing,
     Decreasing,
-    Unkown,
+    Unknown,
+}
+
+fn is_sequence_safe(sequence: &[i32]) -> bool {
+    if sequence.len() < 2 {
+        return true;
+    }
+
+    let mut direction = Direction::Unknown;
+    let mut prev = sequence[0];
+
+    for &curr in &sequence[1..] {
+        let diff = curr - prev;
+
+        if diff == 0 || diff.abs() > 3 {
+            return false;
+        }
+
+        match direction {
+            Direction::Unknown => {
+                direction = if diff > 0 {
+                    Direction::Increasing
+                } else {
+                    Direction::Decreasing
+                };
+            }
+            Direction::Increasing => {
+                if diff < 0 {
+                    return false;
+                }
+            }
+            Direction::Decreasing => {
+                if diff > 0 {
+                    return false;
+                }
+            }
+        }
+
+        prev = curr;
+    }
+
+    true
 }
 
 fn main() {
@@ -18,57 +59,35 @@ fn main() {
         })
         .collect::<Vec<Vec<i32>>>();
 
+    // Part One
     let mut safe = 0;
-    'outer: for mut line in lines {
-        println!("{:?}", line);
+    for line in lines.clone() {
+        if is_sequence_safe(&line) {
+            safe += 1;
+            continue;
+        }
+    }
+    println!("Part One: {}", safe);
 
-        let mut direction = Direction::Unkown;
-        let mut prev = line[0];
-
-        'inner: for e in line[1..].iter() {
-            println!("{} {}", e, prev);
-
-            let diff = e - prev;
-
-            if diff == 0 {
-                println!("Numbers are the same {} {}", e, prev);
-                continue 'outer;
-            }
-            if diff.abs() > 3 {
-                println!("Difference is too big {}", diff);
-                continue 'outer;
-            }
-
-            match direction {
-                Direction::Unkown => {
-                    if diff > 0 {
-                        direction = Direction::Increasing;
-                    } else if diff < 0 {
-                        direction = Direction::Decreasing;
-                    } else {
-                        println!("Numbers are the same {} {}", e, prev);
-                        continue 'outer;
-                    }
-                }
-                Direction::Increasing => {
-                    if diff < 0 {
-                        println!("Numbers are not increasing anymore");
-                        continue 'outer;
-                    }
-                }
-                Direction::Decreasing => {
-                    if diff > 0 {
-                        println!("Numbers are not decreasing anymore");
-                        continue 'outer;
-                    }
-                }
-            }
-
-            prev = e.to_owned();
+    // Part Two
+    let mut safe = 0;
+    'outer: for line in lines {
+        // First check if the sequence is already safe
+        if is_sequence_safe(&line) {
+            safe += 1;
+            continue;
         }
 
-        safe += 1;
-    }
+        // Try removing one number at a time and check if the resulting sequence is safe
+        for i in 0..line.len() {
+            let mut modified_line = line.clone();
+            modified_line.remove(i);
 
-    println!("Part One: {}", safe);
+            if is_sequence_safe(&modified_line) {
+                safe += 1;
+                continue 'outer;
+            }
+        }
+    }
+    println!("Part Two: {}", safe);
 }
