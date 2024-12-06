@@ -13,12 +13,12 @@ fn main() {
         })
         .collect::<Vec<Vec<i32>>>();
 
-    let mut nums: HashMap<i32, Vec<i32>> = HashMap::new();
-    pages.iter().for_each(|page| {
-        nums.entry(page[0]).or_insert(Vec::new());
-        nums.entry(page[1]).or_insert(Vec::new());
-        nums.get_mut(&page[1]).unwrap().push(page[0]);
-    });
+    let mut numbers: HashMap<i32, Vec<i32>> = HashMap::new();
+    for page in pages {
+        numbers.entry(page[0]).or_insert(Vec::new());
+        numbers.entry(page[1]).or_insert(Vec::new());
+        numbers.get_mut(&page[1]).unwrap().push(page[0]);
+    }
 
     let updates = data[1]
         .split("\n")
@@ -30,21 +30,24 @@ fn main() {
         })
         .collect::<Vec<Vec<i32>>>();
 
-    let mut invalid_updates: Vec<Vec<i32>> = vec![];
     let mut valid_updates: Vec<i32> = vec![];
+    let mut invalid_updates: Vec<Vec<i32>> = vec![];
     for update in updates {
         let mut valid = true;
+
         for i in 0..update.len() {
-            let before = update.get(..i).unwrap();
-            if let Some(num) = nums.get(&update[i]) {
-                for n in before {
-                    if !num.contains(n) {
+            let previous = update.get(..i).unwrap();
+
+            if let Some(order) = numbers.get(&update[i]) {
+                for p in previous {
+                    if !order.contains(p) {
                         valid = false;
                         break;
                     }
                 }
             }
         }
+
         if valid {
             valid_updates.push(update[update.len() / 2]);
         } else {
@@ -56,21 +59,25 @@ fn main() {
     let mut count = 0;
     for invalid_update in invalid_updates {
         let mut sorted_update = invalid_update.clone();
+
         sorted_update.sort_by(|a, b| {
-            let a_before = nums
+            let a_before = numbers
                 .get(a)
                 .unwrap()
                 .iter()
                 .filter(|x| invalid_update.contains(x))
                 .collect::<Vec<&i32>>();
-            let b_before = nums
+
+            let b_before = numbers
                 .get(b)
                 .unwrap()
                 .iter()
                 .filter(|x| invalid_update.contains(x))
                 .collect::<Vec<&i32>>();
+
             a_before.len().cmp(&b_before.len())
         });
+
         count += sorted_update[sorted_update.len() / 2];
     }
     println!("Part Two: {:?}", count);
