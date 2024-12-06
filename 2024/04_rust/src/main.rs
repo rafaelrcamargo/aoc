@@ -35,12 +35,6 @@ fn main() {
                 .map(|di| (0..3).map(|dj| rows[i + di][j + dj]).collect())
                 .collect();
 
-            // Print each 3x3 window
-            // for row in &window {
-            //     println!("{:?}", row);
-            // }
-            // println!("---");
-
             count += check_x_mas(&window);
         }
     }
